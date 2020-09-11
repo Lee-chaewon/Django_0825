@@ -59,6 +59,28 @@
             </div>
           </div>
 
+           <!-- Like-->
+           {% if user.is_authenticated %}
+           {% if user in post.like_users.all %}
+             <a href="{% url 'like' post.id %}"><i class="fas fa-heart"></i></a>
+           {% else %}
+             <a href="{% url 'like' post.id %}"><i class="far fa-heart"></i></a>
+           {% endif %}
+             <!--like user count-->
+             {{ post.like_users.count }}명이 좋아합니다.<br><br>
+                   
+           {% else %}
+           <i class="far fa-heart"></i> {{ post.like_users.count }}명이 좋아합니다.
+           <br>좋아요를 누르려면 로그인이 필요합니다.
+             
+           {% endif %}
+
+
+           
+
+           {% for likeuser in post.like_users.all %}
+           {{likeuser.username}}
+           {% endfor %}
 
          <!-- Single Comment -->
         {% for comment in post.comment_set.all %}

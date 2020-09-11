@@ -1,14 +1,13 @@
-from .models import Post
-from django.shortcuts import render, redirect, get_object_or_404
-from faker import Faker #faker 추가
-from django.utils import timezone # timezone 추가
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Post, Comment
+from faker import Faker
+from django.utils import timezone
 from .forms import PostForm
-from .models import Post, Comment #Comment 추가
+# Create your views here.
 
 def home(request):
     posts = Post.objects
     return render(request, 'home.html', {'posts':posts})
-
 
 def create10(request):
     ifake = Faker()
@@ -19,10 +18,6 @@ def create10(request):
         post.pub_date = timezone.datetime.now()
         post.save()
     return redirect('/')
-
-def detail(request, post_id):
-    post_detail = get_object_or_404(Post, pk=post_id)
-    return render(request, 'detail.html', {'post':post_detail})
 
 def new(request):
     if request.method == "POST":
@@ -35,6 +30,10 @@ def new(request):
     else:
         form = PostForm()
         return render(request, 'new.html', {'form': form})
+
+def detail(request, post_id):
+    post_detail = get_object_or_404(Post, pk=post_id)
+    return render(request, 'detail.html', {'post':post_detail})
 
 def edit(request, post_id):
     post = get_object_or_404(Post, pk=post_id)
@@ -67,6 +66,7 @@ def comments_create(request, post_id):
     #댓글 생성후, 디테일 페이지로 redirect시킴
     return redirect('/' + str(post.id))
 
+
 def comments_delete(request, post_id, comment_id):
     comment = Comment.objects.get(pk=comment_id)
     comment.delete()
@@ -84,3 +84,14 @@ def comments_update(request, post_id, comment_id):
     
     else:
         return render(request, 'comments_update.html', {'post':post, 'comment':comment})
+
+def like(request, post_id):
+    post = get_object_or_404(Post, pk=post_id)
+    # 이미 좋아요를 눌렀다면
+    if request.user in post.like_users.all():
+        #좋아요 취소
+        post.like_users.remove(request.user)
+    else:
+        post.like_users.add(request.user)
+    
+    return redirect('/' + str(post.id))

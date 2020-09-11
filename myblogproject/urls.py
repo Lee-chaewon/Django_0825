@@ -1,5 +1,4 @@
 """myblogproject URL Configuration
-
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.1/topics/http/urls/
 Examples:
@@ -14,10 +13,11 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include #urls 분리에 사용되는 include 추가 import
-from django.conf.urls import url #추가 작성
+from django.urls import path, include
+from django.conf.urls import url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     url('', include('myblog.urls')),
+    path('accounts/', include('allauth.urls')),
 ]
